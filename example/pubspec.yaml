@@ -1,0 +1,27 @@
+name: example
+description: sample app for sliding_top_panel package
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.16.1 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  sliding_top_panel:
+    path: ../
+
+  flutter_lints: ^1.0.0
+
+flutter:
+  uses-material-design: true
