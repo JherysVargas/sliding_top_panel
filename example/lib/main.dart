@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:sliding_top_panel/sliding_top_panel.dart';
 
@@ -15,54 +16,110 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      debugShowCheckedModeBanner: false,
+      home: const MyHomePage(title: 'Example Sliding Panel'),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
-  final SlidingPanelTopController _controller = SlidingPanelTopController();
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  bool _isPanelVisible = false;
+  late final SlidingPanelTopController _controller;
+
+  @override
+  void initState() {
+    _controller = SlidingPanelTopController()..addListener(listenerController);
+    super.initState();
+  }
+
+  void listenerController() {
+    setState(() {
+      _isPanelVisible = _controller.isPanelOpen;
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(listenerController);
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(widget.title),
       ),
       body: SlidingTopPanel(
-        controller: _controller,
-        panel: (context) => InkWell(
-          onTap: _controller.close,
-          child: const SizedBox(
-            height: 300,
-            child: Text(
-              'Panel',
-            ),
-          ),
-        ),
-        body: Container(
+        // maxHeight: 100,
+        decorationPanel: const BoxDecoration(
           color: Colors.white,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const <Widget>[
-                Text(
-                  'You have pushed the button this many times:',
-                ),
-              ],
-            ),
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(10),
+            bottomRight: Radius.circular(10),
           ),
         ),
+        controller: _controller,
+        header: Container(
+          height: 55,
+          color: Colors.white,
+          child: ListTile(
+            title: const Text("Header Panel"),
+            trailing: Icon(
+              _isPanelVisible
+                  ? Icons.keyboard_arrow_up_rounded
+                  : Icons.keyboard_arrow_down_rounded,
+              size: 20,
+              color: Colors.black45,
+            ),
+            onTap: _controller.toggle,
+          ),
+        ),
+        panel: (_) => _listPanel(),
+        body: _gridView(),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _controller.toggle,
         tooltip: 'Increment',
-        child: const Icon(Icons.toggle_off),
+        icon: const Icon(Icons.toggle_off),
+        label: Text(_isPanelVisible ? 'Close Panel' : 'Open Panel'),
       ),
     );
   }
+
+  Widget _gridView() => GridView.builder(
+        padding: const EdgeInsets.only(top: 55),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+        ),
+        itemBuilder: (BuildContext _, int __) => Container(
+          color: _getColor(),
+        ),
+      );
+
+  Widget _listPanel() => ListView.builder(
+        itemCount: 20,
+        padding: EdgeInsets.zero,
+        itemBuilder: (BuildContext context, int index) => ListTile(
+          title: Text("Item $index"),
+          onTap: _controller.close,
+        ),
+      );
+
+  Color _getColor() => Color.fromRGBO(
+        math.Random().nextInt(255),
+        math.Random().nextInt(255),
+        math.Random().nextInt(255),
+        1,
+      );
 }
