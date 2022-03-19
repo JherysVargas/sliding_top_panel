@@ -15,7 +15,7 @@ dependencies:
 <br>
 
 ## Demo
-<img width="250px" alt="Example" src="https://github.com/JherysVargas/sliding_top_panel/screenshots/example.gif"/>
+<img width="250px" alt="Example" src="./screenshots/example.gif"/>
 
 <br>
 
