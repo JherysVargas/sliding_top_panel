@@ -45,7 +45,7 @@ class _PanelState extends State<Panel> with SingleTickerProviderStateMixin {
       duration: const Duration(milliseconds: 300),
     );
 
-    WidgetsBinding.instance?.addPostFrameCallback(_calculateHeightAvailable);
+    WidgetsBinding.instance.addPostFrameCallback(_calculateHeightAvailable);
 
     widget.controller.addListener(_listenerController);
   }
