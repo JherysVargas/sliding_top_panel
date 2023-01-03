@@ -24,7 +24,7 @@ class Panel extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _PanelState createState() => _PanelState();
+  State<Panel> createState() => _PanelState();
 }
 
 class _PanelState extends State<Panel> with SingleTickerProviderStateMixin {
@@ -51,9 +51,8 @@ class _PanelState extends State<Panel> with SingleTickerProviderStateMixin {
   }
 
   void _calculateHeightAvailable(Duration _) {
-    final double maxHeight = widget.maxHeight! > 0
-        ? widget.maxHeight!
-        : _getHeightHeaderRenderProducts();
+    final double maxHeight =
+        widget.maxHeight! > 0 ? widget.maxHeight! : _getHeightHeaderList();
 
     _heightContentAnimation = Tween<double>(
       begin: 0,
@@ -66,10 +65,10 @@ class _PanelState extends State<Panel> with SingleTickerProviderStateMixin {
     );
   }
 
-  double _getHeightHeaderRenderProducts() {
-    final RenderBox renderBoxListSubCategories =
+  double _getHeightHeaderList() {
+    final RenderBox renderBoxList =
         _backDropContainer.currentContext!.findRenderObject() as RenderBox;
-    return renderBoxListSubCategories.size.height / 2;
+    return renderBoxList.size.height / 2;
   }
 
   void _listenerController() {
@@ -78,22 +77,6 @@ class _PanelState extends State<Panel> with SingleTickerProviderStateMixin {
     } else {
       _animationController.reverse();
     }
-  }
-
-  @override
-  void didUpdateWidget(covariant Panel oldWidget) {
-    if ((oldWidget.maxHeight != widget.maxHeight)) {
-      _calculateHeightAvailable(Duration.zero);
-    }
-    if (oldWidget.controller != widget.controller) {
-      _changeInstanceController(oldWidget);
-    }
-    super.didUpdateWidget(oldWidget);
-  }
-
-  void _changeInstanceController(Panel oldWidget) {
-    oldWidget.controller.removeListener(_listenerController);
-    widget.controller.addListener(_listenerController);
   }
 
   @override

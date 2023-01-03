@@ -32,19 +32,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool _isPanelVisible = false;
-  late final SlidingPanelTopController _controller;
+  final ValueNotifier<bool> _isPanelVisible = ValueNotifier(false);
+  final SlidingPanelTopController _controller = SlidingPanelTopController();
 
   @override
   void initState() {
-    _controller = SlidingPanelTopController()..addListener(listenerController);
     super.initState();
+    _controller.addListener(listenerController);
   }
 
   void listenerController() {
-    setState(() {
-      _isPanelVisible = _controller.isPanelOpen;
-    });
+    _isPanelVisible.value = _controller.isPanelOpen;
   }
 
   @override
@@ -71,34 +69,50 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         controller: _controller,
         header: Container(
-          height: 55,
           color: Colors.white,
           child: ListTile(
             title: const Text("Header Panel"),
-            trailing: Icon(
-              _isPanelVisible
-                  ? Icons.keyboard_arrow_up_rounded
-                  : Icons.keyboard_arrow_down_rounded,
-              size: 20,
-              color: Colors.black45,
-            ),
+            trailing: _buildArrowIconHeader(),
             onTap: _controller.toggle,
           ),
         ),
-        panel: (_) => _listPanel(),
-        body: _gridView(),
+        panel: (_) => _buildListPanel(),
+        body: _buildGridList(),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _controller.toggle,
         tooltip: 'Increment',
         icon: const Icon(Icons.toggle_off),
-        label: Text(_isPanelVisible ? 'Close Panel' : 'Open Panel'),
+        label: _buildTextFloatingButton(),
       ),
     );
   }
 
-  Widget _gridView() => GridView.builder(
-        padding: const EdgeInsets.only(top: 55),
+  Widget _buildArrowIconHeader() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: _isPanelVisible,
+      builder: (BuildContext _, bool isVisible, Widget? __) {
+        return Icon(
+          isVisible
+              ? Icons.keyboard_arrow_up_rounded
+              : Icons.keyboard_arrow_down_rounded,
+          size: 20,
+          color: Colors.black45,
+        );
+      },
+    );
+  }
+
+  Widget _buildTextFloatingButton() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: _isPanelVisible,
+      builder: (BuildContext _, bool isVisible, Widget? __) {
+        return Text(isVisible ? 'Close Panel' : 'Open Panel');
+      },
+    );
+  }
+
+  Widget _buildGridList() => GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
         ),
@@ -107,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       );
 
-  Widget _listPanel() => ListView.builder(
+  Widget _buildListPanel() => ListView.builder(
         itemCount: 20,
         padding: EdgeInsets.zero,
         itemBuilder: (BuildContext context, int index) => ListTile(

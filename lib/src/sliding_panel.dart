@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sliding_top_panel/src/panel.dart';
 import 'package:sliding_top_panel/src/sliding_panel_controller.dart';
 
-class SlidingTopPanel extends StatelessWidget {
+class SlidingTopPanel extends StatefulWidget {
   /// The Widget that lies underneath the sliding panel.
   final Widget body;
 
@@ -64,26 +64,56 @@ class SlidingTopPanel extends StatelessWidget {
         super(key: key);
 
   @override
+  State<SlidingTopPanel> createState() => _SlidingTopPanelState();
+}
+
+class _SlidingTopPanelState extends State<SlidingTopPanel> {
+  final GlobalKey _headerKey = GlobalKey();
+  final ValueNotifier<double> _marginTopBody = ValueNotifier(0);
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(_getMarginBody);
+  }
+
+  @override
+  void didUpdateWidget(covariant SlidingTopPanel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.header.hashCode != oldWidget.header.hashCode) {
+      WidgetsBinding.instance.addPostFrameCallback(_getMarginBody);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Stack(
       alignment: Alignment.topCenter,
       children: [
-        Container(
-          color: backgroundColor,
-          child: body,
+        ValueListenableBuilder<double>(
+          valueListenable: _marginTopBody,
+          builder: (BuildContext context, double marginTop, Widget? child) {
+            return AnimatedContainer(
+              duration: kThemeAnimationDuration,
+              color: widget.backgroundColor,
+              margin: EdgeInsets.only(top: marginTop),
+              child: child,
+            );
+          },
+          child: widget.body,
         ),
         Column(
           children: [
-            header != null ? _header() : const SizedBox(),
+            if (widget.header != null) _buildHeader(),
             Panel(
-              maxHeight: maxHeight,
-              child: panel(context),
-              controller: controller,
-              decoration: decorationPanel,
-              backdropColor: backdropColor!,
-              backdropOpacity: backdropOpacity!,
-              backgroundColorPanel: backgroundColorPanel,
-              backdropEnabledToClose: backdropEnabledToClose!,
+              maxHeight: widget.maxHeight,
+              controller: widget.controller,
+              decoration: widget.decorationPanel,
+              backdropColor: widget.backdropColor!,
+              backdropOpacity: widget.backdropOpacity!,
+              backgroundColorPanel: widget.backgroundColorPanel,
+              backdropEnabledToClose: widget.backdropEnabledToClose!,
+              child: widget.panel(context),
             ),
           ],
         ),
@@ -91,8 +121,20 @@ class SlidingTopPanel extends StatelessWidget {
     );
   }
 
-  Widget _header() => GestureDetector(
-        onTap: onTapHeaderEnabled! ? controller.toggle : null,
-        child: header,
+  Widget _buildHeader() => GestureDetector(
+        key: _headerKey,
+        onTap: widget.onTapHeaderEnabled! ? widget.controller.toggle : null,
+        child: widget.header,
       );
+
+  void _getMarginBody(Duration _) {
+    if (_headerKey.currentContext != null) {
+      final RenderBox renderBoxHeader =
+          _headerKey.currentContext!.findRenderObject() as RenderBox;
+
+      if (_marginTopBody.value != renderBoxHeader.size.height) {
+        _marginTopBody.value = renderBoxHeader.size.height;
+      }
+    }
+  }
 }

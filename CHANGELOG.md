@@ -17,3 +17,10 @@
 ## 0.0.5
 
 * update warnings
+
+## 0.0.6
+
+* update `Readme.md`
+* Dependencies upgrade
+* Performance improvements
+* Automatic top margin relative to header size

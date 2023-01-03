@@ -1,6 +1,6 @@
 name: sliding_top_panel
 description: A flutter widget that allows you to display a sliding top panel.
-version: 0.0.5
+version: 0.0.6
 homepage: https://github.com/JherysVargas/sliding_top_panel.git
 
 environment:
@@ -14,6 +14,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^1.0.0
+  flutter_lints: ^2.0.1
 
 flutter:
