@@ -24,3 +24,7 @@
 * Dependencies upgrade
 * Performance improvements
 * Automatic top margin relative to header size
+
+## 0.0.7
+
+* update `Readme.md `

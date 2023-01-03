@@ -9,13 +9,13 @@ A flutter widget that allows you to display a sliding top panel, this widget wor
 Add the following to your `pubspec.yaml` file:
 ```yaml
 dependencies:
-  sliding_top_panel: ^0.0.6
+  sliding_top_panel: ^0.0.7
 ```
 
 <br>
 
 ## Demo
-<img width="250px" alt="Example" src="https://raw.githubusercontent.com/JherysVargas/sliding_top_panel/main/screenshots/example_ios.gif"/>
+<img width="250px" alt="Example" src="https://raw.githubusercontent.com/JherysVargas/sliding_top_panel/main/screenshots/example.gif"/>
 
 <br>
 
